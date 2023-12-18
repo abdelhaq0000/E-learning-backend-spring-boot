@@ -53,50 +53,17 @@ public class TestController {
 
 
 
-    @GetMapping("/all")
-    public String allAccess() {
-        return "Public Content.";
-    }
-
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('STUDENT') or hasRole('PROF') or hasRole('ADMIN')")
-    public String userAccess() {
-        return "User Content.";
-    }
-
-    @GetMapping("/mod")
-    @PreAuthorize("hasRole('PROF')")
-    public String moderatorAccess() {
-        return "Moderator Board.";
-    }
-
-    @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
-    public String adminAccess() {
-        return "Admin Board.";
-    }
-
-    @GetMapping("/student")
-    @PreAuthorize("hasRole('STUDENT')")
-    public String studentacss(){
-        return "I'am student";
-    }
 
     @PostMapping("/upload/{username}")
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,@PathVariable("username") String username) {
         try {
-            // Check if the file is not empty
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body("File is empty");
             }
 
-            // Create a new ImageProfile
             ImageProfile imageProfile = new ImageProfile();
-
-            // Set the image data as a byte array
             imageProfile.setImage(file.getBytes());
             imageProfile.setUsername(username);
-            // Save the ImageProfile to the repository
             imageProfileRepository.save(imageProfile);
             return ResponseEntity.ok("Image uploaded successfully.");
         } catch (Exception e) {

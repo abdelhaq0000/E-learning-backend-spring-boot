@@ -8,13 +8,14 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Document("cours")
 public class Cour {
     @Id
-    private String id ;
+    private String id;
     private String title;
     private String category;
     private List<String> paragraphs;

@@ -69,18 +69,20 @@ public class AuthController {
         List<String> roles = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
-        System.out.println("user is login" + loginRequest.getUsername() );
-        getUserInfo(loginRequest.getUsername(),loginRequest.getPassword());
+        System.out.println("user is login" + loginRequest.getUsername());
+        getUserInfo(loginRequest.getUsername(), loginRequest.getPassword());
         return ResponseEntity.ok(new UserInfoResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 roles));
     }
+
     @GetMapping("/all")
     public String allAccess(@Valid @RequestBody SignupRequest signUpRequest) {
         return "Public Content.";
     }
+
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 
@@ -96,10 +98,9 @@ public class AuthController {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        // Create new user's account
         User user = new User(signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()),signUpRequest.getAge());
+                encoder.encode(signUpRequest.getPassword()), signUpRequest.getAge());
 
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
@@ -108,7 +109,7 @@ public class AuthController {
             Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
-            System.out.println("rolle add is "+userRole);
+            System.out.println("rolle add is " + userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
@@ -116,26 +117,26 @@ public class AuthController {
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);
-                        System.out.println("rolle add is "+adminRole.getName());
+                        System.out.println("rolle add is " + adminRole.getName());
                         break;
                     case "prof":
                         Role modRole = roleRepository.findByName(ERole.ROLE_PROF)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(modRole);
-                        System.out.println("rolle add is "+modRole.getName());
+                        System.out.println("rolle add is " + modRole.getName());
                         break;
                     default:
                         Role userRole = roleRepository.findByName(ERole.ROLE_STUDENT)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(userRole);
-                        System.out.println("rolle add is "+ userRole.getName());
+                        System.out.println("rolle add is " + userRole.getName());
                 }
             });
         }
 
         user.setRoles(roles);
         userRepository.save(user);
-        System.out.println("user add "+signUpRequest.getUsername());
+        System.out.println("user add " + signUpRequest.getUsername());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signUpRequest.getUsername(), signUpRequest.getPassword()));
 
@@ -146,13 +147,14 @@ public class AuthController {
         List<String> rolesDiff = userDetails.getAuthorities().stream()
                 .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
-        registerUser(signUpRequest.getUsername(),signUpRequest.getPassword(),signUpRequest.getEmail());
+        registerUser(signUpRequest.getUsername(), signUpRequest.getPassword(), signUpRequest.getEmail());
         return ResponseEntity.ok(new UserInfoResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 rolesDiff));
     }
+
     private static final String CHAT_ENGINE_PRIVATE_KEY = "812d4609-1828-46fc-a328-df62b6183279"; // Replace with your actual private key
 
     public static void registerUser(String username, String password, String email) {
@@ -163,30 +165,27 @@ public class AuthController {
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
 
-            // Set headers
+
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/json");
             con.setRequestProperty("Private-Key", CHAT_ENGINE_PRIVATE_KEY);
 
-            // Enable input/output streams
+
             con.setDoOutput(true);
 
-            // Build the request body
+
             Map<String, Object> requestBody = new HashMap<>();
             requestBody.put("username", username);
             requestBody.put("secret", "1234");
             requestBody.put("email", email);
 
-            // Convert the request body to JSON
             String jsonInputString = mapToJson(requestBody);
 
-            // Write the JSON payload to the request body
             try (OutputStream os = con.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes("utf-8");
                 os.write(input, 0, input.length);
             }
 
-            // Print the response code
             System.out.println("Response Code: " + con.getResponseCode());
 
         } catch (Exception e) {
@@ -216,14 +215,14 @@ public class AuthController {
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
-            // Set headers
+
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/json");
             con.setRequestProperty("Project-ID", CHAT_ENGINE_PROJECT_ID);
             con.setRequestProperty("User-Name", username);
             con.setRequestProperty("User-Secret", secret);
 
-            // Generate response String
+
             StringBuilder responseStr = new StringBuilder();
             try (BufferedReader br = new BufferedReader(
                     new InputStreamReader(con.getInputStream(), "utf-8"))) {
@@ -233,12 +232,12 @@ public class AuthController {
                 }
             }
 
-            // Convert JSON response to Map
+
             Map<String, Object> response = new Gson().fromJson(
                     responseStr.toString(), new TypeToken<HashMap<String, Object>>() {
                     }.getType());
 
-            // Process the response as needed
+
             System.out.println("Response: " + response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -248,12 +247,13 @@ public class AuthController {
             }
         }
     }
+
     @GetMapping("/ceartAdmin")
-    public String addAdmin(){
+    public String addAdmin() {
         // Create new user's account
         User user = new User("admin",
                 "admin@elearning.ma",
-                encoder.encode("admin1234"),40);
+                encoder.encode("admin1234"), 40);
         Set<Role> roles = new HashSet<>();
         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));

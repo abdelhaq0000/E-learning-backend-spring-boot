@@ -29,8 +29,7 @@ public class VisitorController {
     @GetMapping("/count-visitor")
     public Long countVisitor(HttpServletRequest request, HttpServletResponse response) {
         String visitorId = getVisitorIdFromCookie(request, response);
-        // Uncomment the following line if you want to log the visitorId
-        // log.info("Visitor ID: " + visitorId);
+
         return visitorService.incrementVisitorCount(visitorId);
     }
 
@@ -49,17 +48,15 @@ public class VisitorController {
             }
         }
 
-        // If no existing cookie is found, create a new one
         String newVisitorId = generateUniqueKey();
         Cookie newCookie = new Cookie("visitorId", newVisitorId);
 
-        // Set the age of the cookie to 1 year (in seconds)
         int maxAge = (int) TimeUnit.DAYS.toSeconds(365);
         newCookie.setMaxAge(maxAge);
 
         response.addCookie(newCookie);
 
-        return newCookie.getValue(); // Return the value of the newly created cookie
+        return newCookie.getValue();
     }
 
 }

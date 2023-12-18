@@ -9,12 +9,12 @@ public class VisitorCount {
     @Id
     private String id;
     private long count;
-    private LocalDateTime lastVisit; // Add lastVisit field
+    private LocalDateTime lastVisit;
 
     public VisitorCount(String id, long count) {
         this.id = id;
         this.count = count;
-        this.lastVisit = LocalDateTime.now(); // Set the initial last visit time
+        this.lastVisit = LocalDateTime.now();
     }
 
     public long getCount() {
@@ -27,6 +27,6 @@ public class VisitorCount {
 
     public void incrementCount() {
         this.count++;
-        this.lastVisit = LocalDateTime.now(); // Update last visit time
+        this.lastVisit = LocalDateTime.now();
     }
 }
